@@ -14,15 +14,28 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 # STATIC_FOLDER = dir_path + '/static'
 UPLOAD_FOLDER = 'uploads'
 STATIC_FOLDER = 'static'
-model = load_model(STATIC_FOLDER + '/' + 'model_design.h5')
 # call model to predict an image
 
-def api(full_path):
+def api(full_path, model):
     img = load_img(full_path, target_size=(224, 224, 3))
     img = np.asarray(img)
     img = np.expand_dims(img, axis=0)
     img = preprocess_input(img)
     return model.predict(img)
+
+def convert_to_png(full_name):
+    import os, glob
+    if full_name.endswith('.tif'):
+        from PIL import Image
+        image = Image.open(full_name)
+        full_name = str(full_name).rstrip(".tif")
+        files = glob.glob(full_name+'*')
+        for f in files:
+            os.remove(f)
+        full_name = full_name + '.jpg'
+        image.save(full_name, 'JPEG')
+        print("ran successfully")
+    return full_name
 
 # home page
 @app.route('/')
@@ -42,13 +55,13 @@ def upload_file():
         file.save(full_name)
 
         indices = {0: 'With Retinoic Acid', 1: 'Without Retinoic Acid'}
-        result = api(full_name)
-
+        model = load_model(STATIC_FOLDER + '/' + 'model_design.h5')
+        result = api(full_name, model)
         predicted_class = np.asscalar(np.argmax(result, axis=1))
-        accuracy = round(result[predicted_class] * 100, 2)
+        accuracy = result[0]
         label = indices[predicted_class]
-
-    return render_template('predict.html', image_file_name = file.filename, label = label, accuracy = accuracy)
+        full_name = convert_to_png(full_name)
+    return render_template('predict.html', user_image = full_name, label = label, accuracy = accuracy)
 
 
 @app.route('/uploads/<filename>')
@@ -56,7 +69,7 @@ def send_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', port=8080)
     app.debug = True
     app.run(debug=True)
     app.debug = True

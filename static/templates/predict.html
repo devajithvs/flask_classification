@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Classification of cells based on Retinoic Acid</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<script>
+    function showloading() {
+        image = document.getElementById('loading_image');
+        image.style.display = 'inline'
+    }
+</script>
+
+<body>
+
+  <h4 style="margin: auto;width: 80%; text-align: center; margin-top: 20px;  text-transform: uppercase">Classification of cells based on Retinoic Acid</h4>
+<div style="width: 90%; margin: auto; text-align: center">
+    <img src="{{ user_image }}" alt="Uploaded Image" style ="max-width: 250px; max-height: 225px; margin-top: 30px; margin-bottom: 10px">
+    <p style="font-style: italic">{{ image_file_name }}</p>
+
+    <h3 style="margin-top: 40px"><b>Predicted Label: <span style="color: green">{{ label }}</span></b></h3>
+    <!-- <h3><b>Confidence : <span style="color: green;">{{ accuracy }} %</span></b></h3> -->
+     <a href="/" style="margin-bottom: 100px;">Back to Home</a>
+     <form action="/upload" method="post" enctype="multipart/form-data" style="margin-top: 100px; width: 80%; text-align: center; margin: auto;" onsubmit="showloading()">
+      <span class="btn btn-default btn-file">
+        Select Another Image <input type="file" name="image">
+    </span><br><br>
+        <input type="submit" value="Upload" class="btn btn-primary">
+  </form>
+    <div style="text-align: center">
+        <img id="loading_image" style="display: none" src="{{ url_for('static', filename='loading.gif')}}">
+    </div>
+</div>
+</body>
+
+</html>
