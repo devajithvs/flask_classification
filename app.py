@@ -18,7 +18,7 @@ model = load_model(STATIC_FOLDER + '/' + 'model_design.h5')
 # call model to predict an image
 
 def api(full_path):
-    img = load_img(full_path, target_size=(150, 150, 3))
+    img = load_img(full_path, target_size=(224, 224, 3))
     img = np.asarray(img)
     img = np.expand_dims(img, axis=0)
     img = preprocess_input(img)
